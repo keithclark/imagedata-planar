@@ -1,0 +1,15 @@
+{
+  "name": "@keithclark/imagedata-planar",
+  "version": "1.0.0",
+  "description": "A module for encoding and decoding planar image data for use with the ImageData interface.",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Keith Clark",
+    "url": "https://keithclark.co.uk"
+  },
+  "license": "MIT"
+}
