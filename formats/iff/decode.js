@@ -29,7 +29,10 @@ import {
   IFF_CHUNK_ID_BODY,
   IFF_CHUNK_ID_VDAT,
   IFF_ENCODING_FORMAT_ACBM,
-  IFF_ENCODING_FORMAT_ILBM
+  IFF_ENCODING_FORMAT_ILBM,
+  IFF_CHUNK_ID_CTBL,
+  IFF_CHUNK_ID_BEAM,
+  IFF_CHUNK_ID_SHAM
 } from './consts.js';
 
 /**
@@ -138,6 +141,26 @@ export default (buffer) => {
       }
     }
 
+    // Amiga "Sliced" HAM — various flavours
+    else if (id === IFF_CHUNK_ID_CTBL || id === IFF_CHUNK_ID_BEAM || id === IFF_CHUNK_ID_SHAM) {
+      if (id === IFF_CHUNK_ID_SHAM) {
+        reader.readUint16(); 
+      }
+      rasters = [];
+      const paletteCount = (reader.byteLength - reader.position) / 32;
+      for (let paletteIndex = 0; paletteIndex < paletteCount; paletteIndex++) {
+        const linePalette = new IndexedPalette(16, { bitsPerChannel: 4 });
+        for (let colorIndex = 0; colorIndex < 16; colorIndex++) {
+          const rgb = reader.readUint16();
+          const r = (rgb >> 8) & 0xf;
+          const g = (rgb >> 4) & 0xf;
+          const b = (rgb) & 0xf;
+          linePalette.setColor(colorIndex, r, g, b);
+        }
+        rasters.push(linePalette)
+      }
+    }
+
     // NEOChrome Master ST rasters.
     else if (id === IFF_CHUNK_ID_RAST) {
       rasters = extractRasterData(reader);
@@ -238,18 +261,36 @@ export default (buffer) => {
 
   // This is an Amiga HAM image.
   if (amigaMode & AMIGA_MODE_HAM) {
-    imageData = decodeHamImage(bitplaneData, width, height, planes, palette);
+    // Is this is a sliced HAM?
+    if (rasters.length) {
+      let colors = rasters;
+      // `SHAM` chunks use the same palette for odd/even frames when rendering
+      // laced images, so we need to double up the palette before decoding.
+      // `CTBL` chunks contain an entry for each line.
+      if (rasters.length < height) {
+        colors = [];
+        for (let c = 0; c < height; c++) {
+          colors.push(rasters[c * rasters.length / height | 0])
+        }
+      }
+      imageData = decodeSlicedHamImage(bitplaneData, width, height, planes, colors);
+    } else {
+      imageData = decodeHamImage(bitplaneData, width, height, planes, palette);
+    }
   }
 
   // If the image uses `RAST` chunks then we need to process the image line by 
   // line, decoding it with the relevent palette.
   else if (rasters.length) {
-    meta.palette = rasters;
     imageData = decodeRasterImage(bitplaneData, width, height, planes, palette, rasters);
   } 
   
   else {
     imageData = decode(new Uint8Array(bitplaneData), width, height, palette, { format: bitplaneEncoding });
+  }
+
+  if (rasters.length) {
+    meta.palette = rasters;
   }
 
   return {
@@ -370,14 +411,13 @@ const extractRasterData = (reader) => {
  * @param {number} width The width of the image
  * @param {number} height The height of the image
  * @param {number} planes The number of bitplanes for the image
- * @param {IndexedPalette} palette The 16 color base palette
+ * @param {IndexedPalette} palette A single 16 color base palette
  */
 const decodeHamImage = (bitplaneData, width, height, planes, palette) => {
   const imageData = new ImageData(width, height);
-  const reader = new HamReader(new Uint8Array(bitplaneData), planes, width, palette);
   const planeWidth = Math.ceil(width / 16) * 16;
   const pixels = new DataView(imageData.data.buffer);
-
+  const reader = new HamReader(new Uint8Array(bitplaneData), planes, width, palette);
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       pixels.setUint32((y * width + x) * 4, reader.read());
@@ -385,7 +425,33 @@ const decodeHamImage = (bitplaneData, width, height, planes, palette) => {
     // Consume any remaining pixels if the image width is not a multiple of 16
     reader.advance(planeWidth - width);
   }
+  return imageData;
+};
 
+
+/**
+ * Decodes a Sliced HAM (Hold and Modify) encoded image. Decoding is identical
+ * to the standard HAM method, but with a new palette set for each scanline.
+ * 
+ * @param {ArrayBuffer} bitplaneData A buffer containing the raw bitplane data
+ * @param {number} width The width of the image
+ * @param {number} height The height of the image
+ * @param {number} planes The number of bitplanes for the image
+ * @param {Array<IndexedPalette>} palette An array of 16 color palettes, one for each scanline
+ */
+const decodeSlicedHamImage = (bitplaneData, width, height, planes, palette) => {
+  const imageData = new ImageData(width, height);
+  const planeWidth = Math.ceil(width / 16) * 16;
+  const pixels = new DataView(imageData.data.buffer);
+  const reader = new HamReader(new Uint8Array(bitplaneData), planes, width, palette[0]);
+  for (let y = 0; y < height; y++) {
+    reader.setPalette(palette[y].resample(8))
+    for (let x = 0; x < width; x++) {
+      pixels.setUint32((y * width + x) * 4, reader.read());
+    }
+    // Consume any remaining pixels if the image width is not a multiple of 16
+    reader.advance(planeWidth - width);
+  }
   return imageData;
 };
 

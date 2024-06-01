@@ -30,6 +30,14 @@ export const IFF_CHUNK_ID_ABIT = 'ABIT';
 export const IFF_CHUNK_ID_BODY = 'BODY';
 export const IFF_CHUNK_ID_VDAT = 'VDAT';
 
+/** Newtek Dynamic HAM color chunk (Amiga) */
+export const IFF_CHUNK_ID_CTBL = 'CTBL';
+
+/** Beam HAM color chunk (Amiga) */
+export const IFF_CHUNK_ID_BEAM = 'BEAM';
+
+/** Sliced HAM (Amiga). Per-scaline palette changes */
+export const IFF_CHUNK_ID_SHAM = 'SHAM';
 
 export const IFF_ENCODING_FORMAT_ILBM = 'ilbm';
 export const IFF_ENCODING_FORMAT_ACBM = 'acbm';

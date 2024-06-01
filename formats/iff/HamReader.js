@@ -62,6 +62,15 @@ export default class HamReader extends BitplaneReader {
     }
   }
 
+  /**
+   * Sets the HAM base color palette. Can be set mid-read allowing SHAM images
+   * to be decoded.
+   * @param {import('../../types.js').IndexedPalette} palette 
+   */
+  setPalette(palette) {
+    this.#colors = palette.toValueArray()
+  }
+  
   #step() {
     const c = super.read();
     if (c <= this.#mask) {
@@ -79,4 +88,5 @@ export default class HamReader extends BitplaneReader {
       }
     }
   }
+
 }
