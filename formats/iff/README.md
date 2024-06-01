@@ -9,3 +9,4 @@ Supports:
 * Amiga EHB (Extra-Halfbright) mode
 * Amiga Hires and Lace mode
 * Amiga HAM6 and HAM8
+* Amiga sliced HAM (SHAM, CTBL and BEAM)
