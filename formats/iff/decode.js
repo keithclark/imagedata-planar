@@ -114,7 +114,7 @@ export default (buffer) => {
       pageWidth = reader.readUint16();      // [+0x10] page width
       pageHeight = reader.readUint16();     // [+0x12] page height
 
-      bytesPerLine = Math.ceil(width / 8);
+      bytesPerLine = Math.ceil(width / 16) * 2;
     } 
 
     // The CAMG chunk. Contains Amiga mode meta data
