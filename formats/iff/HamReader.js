@@ -22,7 +22,7 @@ export default class HamReader extends BitplaneReader {
    * The current color as a 32bit RGBA value
    * @type {number}
    */
-  #currentColor;
+  #currentColor = 0xff;
 
   #mask;
 
@@ -69,6 +69,7 @@ export default class HamReader extends BitplaneReader {
    */
   setPalette(palette) {
     this.#colors = palette.toValueArray()
+    this.#currentColor = 0xff;
   }
   
   #step() {
