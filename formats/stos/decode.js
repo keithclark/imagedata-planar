@@ -142,7 +142,7 @@ export default (buffer) => {
     }
   }
 
-  const imageData = decode(decompressedBytes, 320, 200, palette, { format: ENCODING_FORMAT_WORD });
+  const imageData = decode(decompressedBytes, width, height, palette, { format: ENCODING_FORMAT_WORD });
 
   return {
     imageData,
