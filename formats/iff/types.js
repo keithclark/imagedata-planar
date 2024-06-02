@@ -1,11 +1,10 @@
-import IffChunkReader from "./IffChunkReader.js";
 import {
   COMPRESSION_NONE,
   COMPRESSION_PACKBITS,
   COMPRESSION_ATARI,
   IFF_ENCODING_FORMAT_ILBM,
   IFF_ENCODING_FORMAT_ACBM
-} from "./consts.js";
+} from './consts.js';
 
 /**
  * @typedef {IFF_ENCODING_FORMAT_ILBM|IFF_ENCODING_FORMAT_ACBM} IffImageEncodingType
@@ -52,5 +51,5 @@ import {
  * @typedef IffChunk
  * @property {string} id - The four-character chunk identifier
  * @property {number} length - The length of the chunk data
- * @property {IffChunkReader} reader - A `IffChunkReader` instance for reading chunk contents
+ * @property {import('./IffChunkReader.js').default} reader - A `IffChunkReader` instance for reading chunk contents
  */

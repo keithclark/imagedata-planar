@@ -2,10 +2,10 @@ import { encode, encodeToBuffer } from '../../encode.js';
 import { pack } from '../../compression/packbits.js';
 import { ENCODING_FORMAT_WORD, ENCODING_FORMAT_LINE } from '../../consts.js';
 import { writeAtariStIndexedPalette } from '../../IndexedPaletteHelpers.js';
-import IndexedPalette from '../../lib/IndexedPalette.js';
 import PlanarCoderError from '../../lib/PlanarCoderError.js';
 
 /**
+ * @typedef {import('../../lib/IndexedPalette.js').default} IndexedPalette
  * @typedef {import('./types.js').DegasImageEncodingOptions} DegasImageEncodingOptions
  */
 
@@ -68,8 +68,8 @@ export default (imageData, palette, options = {}) => {
   // Encode the ImageData into compressed bitplane data. Note that Degas uses
   // line interleaved encoding when compressing data.
   const uncompressedData = encode(imageData, palette, { format: ENCODING_FORMAT_LINE });
-  const compressedData = pack(uncompressedData, planeLength)
-  bitplaneData.set(compressedData)
+  const compressedData = pack(uncompressedData, planeLength);
+  bitplaneData.set(compressedData);
 
   return buffer.slice(0, bitplaneData.byteOffset + compressedData.byteLength);
 

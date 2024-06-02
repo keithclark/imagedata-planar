@@ -157,7 +157,7 @@ export default (buffer) => {
           const b = (rgb) & 0xf;
           linePalette.setColor(colorIndex, r, g, b);
         }
-        rasters.push(linePalette)
+        rasters.push(linePalette);
       }
     }
 
@@ -270,7 +270,7 @@ export default (buffer) => {
       if (rasters.length < height) {
         colors = [];
         for (let c = 0; c < height; c++) {
-          colors.push(rasters[c * rasters.length / height | 0])
+          colors.push(rasters[c * rasters.length / height | 0]);
         }
       }
       imageData = decodeSlicedHamImage(bitplaneData, width, height, planes, colors);
@@ -445,7 +445,7 @@ const decodeSlicedHamImage = (bitplaneData, width, height, planes, palette) => {
   const pixels = new DataView(imageData.data.buffer);
   const reader = new HamReader(new Uint8Array(bitplaneData), planes, width, palette[0]);
   for (let y = 0; y < height; y++) {
-    reader.setPalette(palette[y].resample(8))
+    reader.setPalette(palette[y].resample(8));
     for (let x = 0; x < width; x++) {
       pixels.setUint32((y * width + x) * 4, reader.read());
     }

@@ -2,7 +2,6 @@ import { encode } from '../../encode.js';
 import IffChunkWriter from './IffChunkWriter.js';
 import { pack } from '../../compression/packbits.js';
 import PlanarCoderError from '../../lib/PlanarCoderError.js';
-import IndexedPalette from '../../lib/IndexedPalette.js';
 import { getPlaneCountForIndexedPalette, createEhbPalette } from '../../IndexedPaletteHelpers.js';
 
 import {
@@ -50,7 +49,6 @@ export default (imageData, palette, options = {}) => {
     amigaEhb = false,
     amigaLace = false,
     amigaHires = false,
-    amigaHam = false,
     pageWidth = imageData.width,
     pageHeight = imageData.height,
     xAspectRatio = 1,
@@ -66,7 +64,7 @@ export default (imageData, palette, options = {}) => {
   if (amigaEhb) {
     encodingPalette = createEhbPalette(palette);
   } else {
-    encodingPalette = palette
+    encodingPalette = palette;
   }
 
   // Get the number of bitplanes required to store the palette
