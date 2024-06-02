@@ -36,9 +36,9 @@ export default class HamReader extends BitplaneReader {
     const bytesPerLine = Math.ceil(width / 8);
     super(buffer, bytesPerLine, 0, 1, bytesPerLine * planes, planes, bytesPerLine);
     this.#planes = planes - 2;
-    this.#colors = palette.toValueArray();
     this.#scale = 255 / (1 << this.#planes) + 1;
     this.#mask = (1 << this.#planes) - 1;
+    this.setPalette(palette);
   }
 
   /**
@@ -68,8 +68,8 @@ export default class HamReader extends BitplaneReader {
    * @param {import('../../types.js').IndexedPalette} palette 
    */
   setPalette(palette) {
-    this.#colors = palette.toValueArray()
-    this.#currentColor = 0xff;
+    this.#colors = palette.toValueArray();
+    this.#currentColor = this.#colors[0];
   }
   
   #step() {
