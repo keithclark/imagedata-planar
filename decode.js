@@ -33,7 +33,7 @@ export const decode = (buffer, width, height, palette, options = {}) => {
   // Regardless of the output width, bitplanes are always stored in multiples of 
   // 16 bits. We need to calculate the width of the stored line for our reader
   // instance.
-  const planeWidth = Math.ceil(width / 16) * 16;
+  const planeWidth = Math.ceil(width / 8) * 8;
 
   let reader;
 

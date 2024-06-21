@@ -286,7 +286,7 @@ export default (buffer) => {
   } 
   
   else {
-    imageData = decode(new Uint8Array(bitplaneData), width, height, palette, { format: bitplaneEncoding });
+    imageData = decode(new Uint8Array(bitplaneData), Math.ceil(width / 16) * 16, height, palette, { format: bitplaneEncoding });
   }
 
   if (rasters.length) {
