@@ -107,7 +107,7 @@ export const writeAtariStIndexedPalette = (buffer, palette) => {
  * @returns {number} The number of bitplanes required to store the palette.
  */
 export const getPlaneCountForIndexedPalette = (palette) => {
-  return Math.ceil(Math.log(palette.length) / Math.log(2))
+  return Math.ceil(Math.log(palette.length) / Math.log(2));
 };
 
 
@@ -119,12 +119,12 @@ export const getPlaneCountForIndexedPalette = (palette) => {
  * @returns {IndexedPalette} the extended palette
  */
 export const createEhbPalette = (palette) => {
-  const ehbPalette = new IndexedPalette(64);
+  const ehbPalette = new IndexedPalette(64, { bitsPerChannel: palette.bitsPerChannel });
 
   for (let c = 0; c < 32; c++) {
     const { r, g, b } = palette.getColor(c);
     ehbPalette.setColor(c, r, g, b);
-    ehbPalette.setColor(c + 32, r / 2, g / 2, b / 2);
+    ehbPalette.setColor(c + 32, r >> 1, g >> 1, b >> 1);
   }
   
   return ehbPalette;
