@@ -33,10 +33,10 @@ export default class HamReader extends BitplaneReader {
     // Ensure the reader is configured to consume images on a 16 bit boundary. 
     // This allows images that aren't multiple of 16 pixels to be correctly
     // decoded.
-    const bytesPerLine = Math.ceil(width / 8);
+    const bytesPerLine = Math.ceil(width / 16) * 2;
     super(buffer, bytesPerLine, 0, 1, bytesPerLine * planes, planes, bytesPerLine);
     this.#planes = planes - 2;
-    this.#scale = 255 / (1 << this.#planes) + 1;
+    this.#scale = 255 / ((1 << this.#planes) - 1);
     this.#mask = (1 << this.#planes) - 1;
     this.setPalette(palette);
   }
